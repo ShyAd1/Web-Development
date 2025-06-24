@@ -1,0 +1,94 @@
+<header class="bg-dark text-white text-center py-5 shadow-lg">
+  <h1 class="display-4 mb-2">📚 Reseñas de Libros</h1>
+  <p class="lead mb-0">
+    Bienvenido a <strong>Reseñas Libros</strong>, tu espacio para descubrir,
+    compartir y debatir sobre libros de todos los géneros.
+  </p>
+</header>
+
+<main class="container my-5">
+  <section class="mb-5">
+    <h2 class="mb-3 text-info">
+      <i class="bi bi-question-circle"></i> ¿Qué hacemos?
+    </h2>
+    <p>En <strong>Reseñas Libros</strong> puedes:</p>
+    <ul class="list-group list-group-flush mb-3">
+      <li class="list-group-item bg-dark text-white border-secondary">
+        <i class="bi bi-search"></i> Descubrir libros recomendados por la
+        comunidad.
+      </li>
+      <li class="list-group-item bg-dark text-white border-secondary">
+        <i class="bi bi-pencil-square"></i> Escribir y compartir tus propias
+        reseñas.
+      </li>
+      <li class="list-group-item bg-dark text-white border-secondary">
+        <i class="bi bi-star"></i> Valorar y comentar las reseñas de otros
+        lectores.
+      </li>
+      <li class="list-group-item bg-dark text-white border-secondary">
+        <i class="bi bi-people"></i> Conectar con amantes de la lectura de todo
+        el mundo.
+      </li>
+    </ul>
+    <blockquote class="blockquote text-secondary fst-italic">
+      "Un libro es un sueño que tienes en tus manos." - Neil Gaiman
+    </blockquote>
+  </section>
+
+  <section class="mb-5">
+    <h2 class="mb-3 text-info">
+      <i class="bi bi-lightbulb"></i> ¿Cómo funciona?
+    </h2>
+    <ol class="list-group list-group-numbered list-group-flush">
+      <li class="list-group-item bg-dark text-white border-secondary">
+        <strong>Regístrate</strong> y crea tu perfil de lector.
+      </li>
+      <li class="list-group-item bg-dark text-white border-secondary">
+        <strong>Busca</strong> libros por título, autor o género.
+      </li>
+      <li class="list-group-item bg-dark text-white border-secondary">
+        <strong>Lee</strong> reseñas y valoraciones de la comunidad.
+      </li>
+      <li class="list-group-item bg-dark text-white border-secondary">
+        <strong>Comparte</strong> tus opiniones y recomendaciones.
+      </li>
+    </ol>
+  </section>
+
+  <!-- home.component.html -->
+  <!-- <section class="mb-5">
+    <h2 class="mb-3 text-info">
+      <i class="bi bi-fire"></i> Libros populares del mes
+    </h2>
+    <div class="row"> -->
+  <!-- *ngFor recorre la lista de libros obtenida desde el backend -->
+  <!-- <div class="col-md-4 mb-3" *ngFor="let libro of libros">
+        <div class="card bg-secondary text-white h-100 shadow">
+          <div class="card-body">
+            <h5 class="card-title">{{ libro.titulo }}</h5>
+            <p class="card-text">{{ libro.autor }}</p> -->
+  <!-- La clase de la badge puede depender del género -->
+  <!-- <span class="badge" [ngClass]="libro.claseGenero">{{
+              libro.genero
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+  <section class="text-center">
+    <h2 class="mb-3 text-info">
+      <i class="bi bi-envelope"></i> ¡Únete a la comunidad!
+    </h2>
+    <p>
+      ¿Listo para compartir tus lecturas favoritas? <br />
+      <a
+        href="#"
+        routerLink="/register"
+        class="btn btn-outline-info btn-lg mt-2"
+        >Crear cuenta</a
+      >
+    </p>
+  </section>
+</main>

@@ -1,0 +1,131 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 rounded-4 bg-dark text-white">
+        <div class="card-body p-5">
+          <h2 class="mb-4 text-center text-primary fw-bold">Crear Cuenta</h2>
+          <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nombre completo</label>
+              <input
+                type="text"
+                class="form-control form-control-lg bg-dark text-white border-secondary"
+                id="name"
+                placeholder="Ingresa tu nombre"
+                required
+                name="name"
+                [(ngModel)]="username"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo electrónico</label>
+              <input
+                type="email"
+                class="form-control form-control-lg bg-dark text-white border-secondary"
+                id="email"
+                placeholder="ejemplo@email.com"
+                required
+                name="email"
+                [(ngModel)]="email"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <div class="input-group">
+                <input
+                  [type]="showPassword1 ? 'text' : 'password'"
+                  class="form-control form-control-lg bg-dark text-white border-secondary"
+                  id="password"
+                  placeholder="Contraseña"
+                  required
+                  name="password"
+                  [(ngModel)]="password"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="togglePasswordVisibility1()"
+                  tabindex="-1"
+                >
+                  <i
+                    class="bi"
+                    [ngClass]="showPassword1 ? 'bi-eye-slash' : 'bi-eye'"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label"
+                >Confirmar contraseña</label
+              >
+              <div class="input-group">
+                <input
+                  [type]="showPassword2 ? 'text' : 'password'"
+                  class="form-control form-control-lg bg-dark text-white border-secondary"
+                  id="confirmPassword"
+                  placeholder="Repite tu contraseña"
+                  required
+                  name="confirmPassword"
+                  [(ngModel)]="confirmPassword"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="togglePasswordVisibility2()"
+                  tabindex="-1"
+                >
+                  <i
+                    class="bi"
+                    [ngClass]="showPassword2 ? 'bi-eye-slash' : 'bi-eye'"
+                  ></i>
+                </button>
+              </div>
+            </div>
+            <div class="mb-3 form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                [(ngModel)]="termsAccepted"
+                name="termsAccepted"
+                id="terms"
+                required
+                #termsAcceptedRef="ngModel"
+              />
+              <label class="form-check-label" for="terms">
+                Acepto los
+                <a
+                  href="#"
+                  routerLink="/terms"
+                  class="text-decoration-underline text-primary"
+                  >términos y condiciones</a
+                >
+              </label>
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary btn-lg w-100 shadow-sm"
+              [disabled]="!isFormValid()"
+            >
+              Registrarse
+              <span
+                class="spinner-border spinner-border-sm ms-2 d-none"
+                role="status"
+                aria-hidden="true"
+                id="loadingSpinner"
+              ></span>
+            </button>
+          </form>
+          <div class="text-center mt-4">
+            <small
+              >¿Ya tienes cuenta?
+              <a href="/login" class="text-primary fw-semibold"
+                >Inicia sesión</a
+              ></small
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
