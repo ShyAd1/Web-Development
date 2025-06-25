@@ -8,6 +8,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { ReviewsComponent } from './reviews/reviews.component';
 import { BooksComponent } from './books/books.component';
 import { AuthorsComponent } from './authors/authors.component';
+import { ReviewFormComponent } from './review-form/review-form.component';
 
 
 
@@ -20,6 +21,7 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'reset-password', component: ResetPasswordComponent },
     { path: 'reviews', component: ReviewsComponent },
+    { path: 'reviews/new', component: ReviewFormComponent },
     { path: 'books', component: BooksComponent },
     { path: 'authors', component: AuthorsComponent},
 ];

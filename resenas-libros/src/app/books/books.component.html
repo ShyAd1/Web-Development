@@ -1,23 +1,23 @@
 <div class="container mt-4 bg-dark text-light rounded shadow-sm py-4">
   <h2 class="mb-4 text-center">Libros Disponibles</h2>
   <div class="row justify-content-center">
-    <div class="col-md-4 mb-4">
+    <div class="col-md-4 mb-4" *ngFor="let libro of libros">
       <div class="card h-100 bg-secondary text-light border-0 shadow">
         <div class="card-body">
-          <h5 class="card-title mb-2">El principito</h5>
+          <h5 class="card-title mb-2">{{ libro.titulo }}</h5>
           <p class="card-subtitle mb-2 text-light-50">
-            Antoine de Saint-Exupéry
+            {{ libro.autor }}
           </p>
           <p class="card-text">
-            <small
-              >Un cuento poético sobre la vida y la naturaleza humana.</small
-            >
+            <small>{{ libro.descripcion }}</small>
           </p>
         </div>
         <div
           class="card-footer bg-transparent border-0 d-flex justify-content-between"
         >
-          <button class="btn btn-primary btn-sm px-3">Reseñar</button>
+          <button class="btn btn-primary btn-sm px-3" routerLink="/reviews/new">
+            Reseñar
+          </button>
           <button class="btn btn-outline-light btn-sm px-3">Quiero leer</button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 <h2 class="text-center text-light my-4">Autores</h2>
 <div class="container">
   <div
+    *ngFor="let autor of autores"
     class="card bg-dark text-light mb-3 shadow-sm"
     style="max-width: 540px; margin: 0 auto"
   >
@@ -10,15 +11,12 @@
       </div>
       <div class="col">
         <div class="card-body">
-          <h5 class="card-title mb-1">Antoine de Saint-Exupéry</h5>
+          <h3 class="card-title mb-1">{{ autor.nombre }}</h3>
           <p class="card-text mb-1">
-            <strong>Libros:</strong> El principito, Vuelo nocturno
+            <strong>Nacionalidad:</strong> {{ autor.nacionalidad }}
           </p>
-          <p class="card-text">
-            <small class="text-light">
-              Un escritor y aviador francés, conocido por su obra "El
-              principito".
-            </small>
+          <p class="card-text mb-1">
+            <strong>Fecha de nacimiento:</strong> {{ autor.fechaNacimiento }}
           </p>
         </div>
       </div>
