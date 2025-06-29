@@ -1,0 +1,23 @@
+<form>
+  <div class="mb-3">
+    <label for="txtCelsius" class="form-label">Temperatura en Celsius: </label>
+    <input type="number" name="txtCelsius" id="txtCelsius" class="form-control" [(ngModel)]="celcius">
+  </div>
+  <div class="mb-3">
+    <label for="txtFahrenheit" class="form-label">Temperatura en Fahrenheit: </label>
+    <input type="number" name="txtFahrenheit" id="txtFahrenheit" class="form-control" [(ngModel)]="fahrenheit">
+  </div>
+  <div class="mb-3">
+    <label for="txtKelvin" class="form-label">Temperatura en Kelvin: </label>
+    <input type="number" name="txtKelvin" id="txtKelvin" class="form-control" [(ngModel)]="kelvin">
+  </div>
+  <div class="mb-3">
+    <button type="button" class="btn btn-primary me-2" (click)="convertirAFahrenheit()">Convertir a Fahrenheit</button>
+    <button type="button" class="btn btn-primary me-2" (click)="convertirAKelvin()">Convertir a Kelvin</button>
+    <button type="button" class="btn btn-primary me-2" (click)="convertirACelcius()">Convertir a Celsius</button>
+    <button type="button" class="btn btn-secondary me-2" (click)="convertirAKelvinDesdeFahrenheit()">Fahrenheit a Kelvin</button>
+    <button type="button" class="btn btn-secondary me-2" (click)="convertirAFahrenheitDesdeKelvin()">Kelvin a Fahrenheit</button>
+    <button type="button" class="btn btn-secondary me-2" (click)="convertirACelciusDesdeKelvin()">Kelvin a Celsius</button>
+    <button type="button" class="btn btn-danger" (click)="limpiarCampos()">Limpiar</button>
+  </div>
+</form>
