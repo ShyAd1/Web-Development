@@ -1,0 +1,57 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tabla de MULTIPLICAR</title>
+  </head>
+  <body>
+    <script type="text/javascript">
+      document.write("<table id='tablita' border=1 align='center'>");
+      document.write("<tr>");
+      document.write(
+        "<td colspan=11 align='center'>" +
+          "<p>" +
+          "TABLAS DE MULTIPLICAR" +
+          "</p>" +
+          "</td>"
+      );
+      document.write("</tr>");
+      document.write("<tr>");
+      document.write(
+        "<td rowspan=11 align='center'>" +
+          "<p>" +
+          "FILA POR COLUMNA" +
+          "</p>" +
+          "</td>"
+      );
+      document.write("</tr>");
+      for (let i = 1; i <= 10; i++) {
+        document.write("<tr>");
+        for (let j = 1; j <= 10; j++) {
+          document.write("<td>" + i * j + "</td>");
+        }
+        document.write("</tr>");
+      }
+      document.write("</table>");
+    </script>
+    <style>
+      body {
+        background-color: #5f5e5e;
+      }
+      #tablita {
+        background-color: rgb(250, 220, 179);
+        border-collapse: collapse;
+      }
+      #tablita td {
+        border: 1px solid black;
+        padding: 3px;
+        width: 60px;
+        height: 5px;
+      }
+      p {
+        font-size: 11;
+        font-weight: bold;
+      }
+    </style>
+  </body>
+</html>
