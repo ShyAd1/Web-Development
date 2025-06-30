@@ -2,11 +2,12 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from models import Base, Usuario, Autor, Categoria, Libro, Resena
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import joinedload
 import datetime
+import re
 
 # Cambia los datos de conexión a los de tu base de datos MySQL
 DATABASE_URL = "mysql+pymysql://Adair:Adair@127.0.0.1:3306/resenas_libros_db"
@@ -39,6 +40,14 @@ class UsuarioSchema(BaseModel):
     email: str
     fechaRegistro: datetime.date
     contrasena: str
+
+    @validator('nombre', 'email', 'contrasena')
+    def no_sql_injection(cls, v):
+        # Evita algunos patrones típicos de SQL Injection
+        if re.search(r"[;'\"]|--|\b(OR|AND|SELECT|INSERT|DELETE|UPDATE|DROP|UNION)\b", v, re.IGNORECASE):
+            raise ValueError("Entrada inválida detectada")
+        return v
+
     class Config:
         orm_mode = True
 
@@ -47,6 +56,13 @@ class AutorSchema(BaseModel):
     nombre: str
     nacionalidad: str
     fechaNacimiento: datetime.date
+
+    @validator('nombre', 'nacionalidad')
+    def no_sql_injection(cls, v):
+        if re.search(r"[;'\"]|--|\b(OR|AND|SELECT|INSERT|DELETE|UPDATE|DROP|UNION)\b", v, re.IGNORECASE):
+            raise ValueError("Entrada inválida detectada")
+        return v
+
     class Config:
         orm_mode = True
 
@@ -54,6 +70,13 @@ class CategoriaSchema(BaseModel):
     idcategorias: Optional[int]
     nombre: str
     descripcion: str
+
+    @validator('nombre', 'descripcion')
+    def no_sql_injection(cls, v):
+        if re.search(r"[;'\"]|--|\b(OR|AND|SELECT|INSERT|DELETE|UPDATE|DROP|UNION)\b", v, re.IGNORECASE):
+            raise ValueError("Entrada inválida detectada")
+        return v
+
     class Config:
         orm_mode = True
 
@@ -64,16 +87,30 @@ class LibroSchema(BaseModel):
     isbn: str
     autores_idautores: int
     categorias_idcategorias: int
+
+    @validator('titulo', 'isbn')
+    def no_sql_injection(cls, v):
+        if re.search(r"[;'\"]|--|\b(OR|AND|SELECT|INSERT|DELETE|UPDATE|DROP|UNION)\b", v, re.IGNORECASE):
+            raise ValueError("Entrada inválida detectada")
+        return v
+
     class Config:
         orm_mode = True
 
 class ResenaSchema(BaseModel):
-    idresenas: Optional[int]
+    idresenas: Optional[int] = None
     calificacion: int
     comentario: str
     fechaResena: datetime.date
     libros_idlibros: int
     usuarios_idusuarios: int
+
+    @validator('comentario')
+    def no_sql_injection(cls, v):
+        if re.search(r"[;'\"]|--|\b(OR|AND|SELECT|INSERT|DELETE|UPDATE|DROP|UNION)\b", v, re.IGNORECASE):
+            raise ValueError("Entrada inválida detectada")
+        return v
+
     class Config:
         orm_mode = True
 
@@ -216,7 +253,9 @@ def get_resenas(db: Session = Depends(get_db)):
 
 @app.post("/resenas/", response_model=ResenaSchema)
 def create_resena(resena: ResenaSchema, db: Session = Depends(get_db)):
-    db_resena = Resena(**resena.dict())
+    resena_dict = resena.dict()
+    resena_dict.pop('idresenas', None)  # Elimina idresenas si viene por error
+    db_resena = Resena(**resena_dict)
     db.add(db_resena)
     db.commit()
     db.refresh(db_resena)

@@ -15,10 +15,13 @@
         <div
           class="card-footer bg-transparent border-0 d-flex justify-content-between"
         >
-          <button class="btn btn-primary btn-sm px-3" routerLink="/reviews/new">
+          <button
+            class="btn btn-primary"
+            [routerLink]="['/reviews']"
+            [queryParams]="{ libro: libro.idlibros }"
+          >
             Reseñar
           </button>
-          <button class="btn btn-outline-light btn-sm px-3">Quiero leer</button>
         </div>
       </div>
     </div>

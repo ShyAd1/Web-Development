@@ -1,33 +1,59 @@
-<form class="bg-dark text-light p-4 rounded">
+<form (ngSubmit)="onSubmit()" class="bg-dark text-light p-4 rounded">
   <div class="mb-3">
-    <label for="book" class="form-label">Libro</label>
-    <input
-      type="text"
-      class="form-control bg-secondary text-light"
-      id="book"
-      placeholder="Ingrese el nombre del libro"
+    <label for="libro" class="form-label">Libro</label>
+    <select
+      id="libro"
+      class="form-select bg-secondary text-light"
+      [(ngModel)]="libroId"
+      name="libroId"
       required
-    />
+    >
+      <option value="" disabled selected>Selecciona un libro</option>
+      <option *ngFor="let libro of libros" [value]="libro.idlibros">
+        {{ libro.titulo }}
+      </option>
+    </select>
   </div>
   <div class="mb-3">
     <label for="rating" class="form-label">Calificación</label>
-    <select class="form-select bg-secondary text-light" id="rating" required>
-      <option value="" disabled selected>Selecciona una calificación</option>
-      <option value="1">1 ⭐</option>
-      <option value="2">2 ⭐⭐</option>
-      <option value="3">3 ⭐⭐⭐</option>
-      <option value="4">4 ⭐⭐⭐⭐</option>
-      <option value="5">5 ⭐⭐⭐⭐⭐</option>
+    <select
+      id="rating"
+      class="form-select bg-secondary text-light"
+      [(ngModel)]="rating"
+      name="rating"
+      required
+    >
+      <option *ngFor="let r of [5,4,3,2,1]" [value]="r">
+        {{ r }}
+      </option>
     </select>
   </div>
   <div class="mb-3">
     <label for="comment" class="form-label">Comentario</label>
     <textarea
-      class="form-control bg-secondary text-light"
       id="comment"
-      rows="4"
+      class="form-control bg-secondary text-light"
+      [(ngModel)]="comment"
+      name="comment"
+      rows="3"
       required
     ></textarea>
   </div>
-  <button type="submit" class="btn btn-primary">Enviar reseña</button>
+  <div class="d-flex justify-content-end">
+    <button
+      type="button"
+      class="btn btn-secondary me-2"
+      (click)="onCancel()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="isSubmitting"
+    >
+      <span *ngIf="!isSubmitting">Publicar Reseña</span>
+      <span *ngIf="isSubmitting">Enviando...</span>
+    </button>
+  </div>
 </form>

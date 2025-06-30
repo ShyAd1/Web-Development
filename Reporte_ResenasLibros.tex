@@ -1,0 +1,350 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{booktabs}
+
+\definecolor{colorIPN}{rgb}{0.5, 0.0,0.13}
+\definecolor{colorESCOM}{rgb}{0.0, 0.5,1.0}
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+
+\lstset{
+    language=Python,
+    basicstyle=\small\ttfamily,
+    numbers=left,
+    numberstyle=\tiny,
+    frame=tb,
+    tabsize=4,
+    columns=fixed,
+    showstringspaces=false,
+    showtabs=false,
+    keepspaces,
+    commentstyle=\color{Violet},
+    keywordstyle=\color{colorIPN}\bfseries,
+    stringstyle=\color{colorESCOM},
+    backgroundcolor=\color{bg}
+}
+
+\title{\Huge\bfseries Reporte del Proyecto: Reseñas de Libros}
+\author{Adair Hernandez}
+\date{\today}
+
+\begin{document}
+%#########################################################
+\begin{titlepage}
+    \centering
+    {\huge \bfseries \color{colorIPN}{Instituto Politécnico Nacional} \par}
+    {\Large \bfseries  \color{colorESCOM}{Escuela Superior de Cómputo} \par }
+    \vspace{1cm}
+    {\huge\Large \color{colorIPN}{Reporte de Proyecto Web: Reseñas de Libros}.\par}
+    \vspace{1.5cm}
+    {\huge\Large  \color{colorESCOM}{Frontend (Angular) y Backend (FastAPI)}\par}
+    \vspace{2cm}
+    {\Large\itshape \color{colorIPN}{Alumno: Adair Hernandez}\par} \hfill \break
+    {\Large\itshape \color{colorIPN}{\today}\par}
+    \vfill
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+
+%################################################
+\section{\color{colorIPN}{Introducción}}
+Este documento describe el desarrollo del sistema \textbf{Reseñas de Libros}, el cual permite a los usuarios registrarse, iniciar sesión, consultar libros, autores y categorías, así como publicar y consultar reseñas de libros. El sistema está compuesto por un \textbf{frontend} en Angular y un \textbf{backend} en FastAPI con base de datos MySQL.
+
+%################################################
+\section{\color{colorIPN}{Estructura del Proyecto}}
+
+\subsection{Estructura de Carpetas}
+\begin{itemize}
+    \item \textbf{resenas-libros/} (Frontend Angular)
+    \item \textbf{resenas-back/} (Backend FastAPI)
+\end{itemize}
+
+\subsection{Diagrama General}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{arquitectura.png}
+    \caption{Arquitectura general del sistema}
+\end{figure}
+
+%################################################
+\section{\color{colorIPN}{Backend: FastAPI}}
+
+\subsection{Estructura de Archivos}
+\begin{verbatim}
+resenas-back/
+├── main.py
+├── models.py
+├── ...
+\end{verbatim}
+
+\subsection{Dependencias}
+\begin{itemize}
+    \item fastapi
+    \item sqlalchemy
+    \item pymysql
+    \item pydantic
+    \item uvicorn
+\end{itemize}
+
+\subsection{Modelos de Base de Datos}
+\begin{itemize}
+    \item Usuario
+    \item Autor
+    \item Categoria
+    \item Libro
+    \item Resena
+\end{itemize}
+
+\subsection{Ejemplo de Modelo SQLAlchemy}
+\begin{lstlisting}[language=Python]
+class Usuario(Base):
+    __tablename__ = "usuarios"
+    idusuarios = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(100))
+    email = Column(String(100), unique=True)
+    fechaRegistro = Column(Date)
+    contrasena = Column(String(255))
+    resenas = relationship("Resena", back_populates="usuario")
+\end{lstlisting}
+
+\subsection{Endpoints Principales}
+\begin{itemize}
+    \item \texttt{GET /usuarios/} -- Listar usuarios
+    \item \texttt{POST /usuarios/} -- Crear usuario
+    \item \texttt{GET /libros/} -- Listar libros
+    \item \texttt{POST /resenas/} -- Crear reseña
+    \item \texttt{GET /resenas-usuarios-libros/} -- Listar reseñas con usuario y libro
+\end{itemize}
+
+\subsection{Validación contra SQL Injection}
+Se usan validadores Pydantic para evitar patrones peligrosos:
+\begin{lstlisting}[language=Python]
+@validator('nombre', 'email', 'contrasena')
+def no_sql_injection(cls, v):
+    if re.search(r"[;'\"]|--|\b(OR|AND|SELECT|INSERT|DELETE|UPDATE|DROP|UNION)\b", v, re.IGNORECASE):
+        raise ValueError("Entrada inválida detectada")
+    return v
+\end{lstlisting}
+
+\subsection{Ejemplo de Endpoint para Crear Reseña}
+\begin{lstlisting}[language=Python]
+@app.post("/resenas/", response_model=ResenaSchema)
+def create_resena(resena: ResenaSchema, db: Session = Depends(get_db)):
+    resena_dict = resena.dict()
+    resena_dict.pop('idresenas', None)
+    db_resena = Resena(**resena_dict)
+    db.add(db_resena)
+    db.commit()
+    db.refresh(db_resena)
+    return db_resena
+\end{lstlisting}
+
+%################################################
+\section{\color{colorIPN}{Frontend: Angular}}
+
+\subsection{Estructura de Carpetas}
+\begin{verbatim}
+resenas-libros/
+├── src/
+│   ├── app/
+│   │   ├── books/
+│   │   ├── reviews/
+│   │   ├── review-form/
+│   │   ├── header/
+│   │   ├── footer/
+│   │   ├── login/
+│   │   ├── register/
+│   │   └── ...
+│   └── ...
+└── ...
+\end{verbatim}
+
+\subsection{Dependencias}
+\begin{itemize}
+    \item Angular 17+
+    \item Bootstrap 5
+    \item SweetAlert2
+    \item RxJS
+\end{itemize}
+
+\subsection{Servicios Principales}
+\begin{itemize}
+    \item \texttt{AuthService}: Manejo de autenticación y usuarios.
+    \item \texttt{ReviewsService}: Manejo de libros y reseñas.
+    \item \texttt{LibroService}: Consulta de libros.
+\end{itemize}
+
+\subsection{Ejemplo de Servicio para Obtener Libros}
+\begin{lstlisting}[language=TypeScript]
+@Injectable({ providedIn: 'root' })
+export class LibroService {
+  private apiUrl = 'http://127.0.0.1:8000/libros/';
+  constructor(private http: HttpClient) {}
+  getLibros(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+}
+\end{lstlisting}
+
+\subsection{Flujo de Creación de Reseña}
+\begin{enumerate}
+    \item El usuario inicia sesión o se registra.
+    \item Desde la vista de libros, puede dar clic en "Reseñar", lo que lo lleva a la vista de reseñas con el formulario abierto y el libro seleccionado.
+    \item El formulario de reseña envía los datos al backend usando \texttt{ReviewsService}.
+    \item El backend valida y guarda la reseña en la base de datos.
+    \item La lista de reseñas se actualiza automáticamente.
+\end{enumerate}
+
+\subsection{Ejemplo de Formulario de Reseña}
+\begin{lstlisting}[language=HTML]
+<form (ngSubmit)="onSubmit()">
+  <select [(ngModel)]="libroId" name="libroId" required>
+    <option *ngFor="let libro of libros" [value]="libro.idlibros">
+      {{ libro.titulo }}
+    </option>
+  </select>
+  <textarea [(ngModel)]="comment" name="comment" required></textarea>
+  <button type="submit">Publicar Reseña</button>
+</form>
+\end{lstlisting}
+
+\subsection{Autenticación y Seguridad}
+\begin{itemize}
+    \item El frontend almacena el token de sesión en localStorage.
+    \item El backend valida los datos y nunca expone contraseñas.
+    \item Los formularios validan los datos antes de enviarlos.
+\end{itemize}
+
+\subsection{Estilos y Experiencia de Usuario}
+\begin{itemize}
+    \item Bootstrap para diseño responsivo.
+    \item SweetAlert2 para notificaciones y confirmaciones.
+    \item Interfaz clara y moderna.
+\end{itemize}
+
+%################################################
+\section{\color{colorIPN}{Conclusión}}
+El sistema permite gestionar usuarios, libros y reseñas de manera segura y eficiente, con una arquitectura moderna y buenas prácticas tanto en frontend como en backend.
+
+%################################################
+\section{\color{colorIPN}{Modelo Entidad-Relación}}
+El modelo entidad-relación (E-R) diseñado para el sistema de reseñas de libros se presenta a continuación. Este modelo incluye cinco entidades fuertes: Usuarios, Reseñas, Libros, Categorías y Autores, conectadas mediante relaciones no identificadoras. Cada entidad tiene una clave primaria única, y las claves foráneas establecen las relaciones entre ellas.
+
+\begin{figure}[H]
+	\centering
+	% Imagen del diagrama ER
+	\includegraphics[scale=0.4]{Diagrama E-R reseña de libros proyecto web.png}
+	\caption{Modelo Entidad-Relación del Sistema de Reseñas de Libros}
+	\label{fig:diagrama_er}
+\end{figure}
+
+\subsection{\color{colorESCOM}{Descripción de las Entidades}}
+\begin{itemize}
+	\item \textbf{Usuarios}: Representa a los usuarios registrados que pueden escribir reseñas. Atributos: id\_usuario (clave primaria), nombre, email, fecha\_registro, contrasena.
+	\item \textbf{Reseñas}: Almacena las reseñas de los libros. Atributos: id\_resena (clave primaria), id\_usuario (clave foránea), id\_libro (clave foránea), calificacion, comentario, fecha\_resena.
+	\item \textbf{Libros}: Contiene la información de los libros. Atributos: id\_libro (clave primaria), id\_categoria (clave foránea), id\_autor (clave foránea), titulo, fecha\_publicacion, isbn.
+	\item \textbf{Categorias}: Clasifica los libros por género o temática. Atributos: id\_categoria (clave primaria), nombre, descripcion.
+	\item \textbf{Autores}: Representa a los autores de los libros. Atributos: id\_autor (clave primaria), nombre, nacionalidad, fecha\_nacimiento.
+\end{itemize}
+
+\subsection{\color{colorESCOM}{Relaciones}}
+\begin{itemize}
+	\item \textbf{Escribe} (Usuarios-Reseñas): Un usuario puede escribir muchas reseñas (1:N).
+	\item \textbf{Tiene} (Libros-Reseñas): Un libro puede tener muchas reseñas (1:N).
+	\item \textbf{Clasifica} (Categorias-Libros): Una categoría puede clasificar muchos libros (1:N).
+	\item \textbf{Escribe} (Autores-Libros): Un autor puede escribir muchos libros (1:N).
+\end{itemize}
+
+\section{\color{colorIPN}{Diccionario de Datos}}
+El diccionario de datos detalla la estructura de las tablas, incluyendo los nombres de los campos, tipos de datos, restricciones y descripciones. A continuación, se presentan cinco tablas, una por cada entidad del sistema.
+
+\begin{table}[H]
+	\centering
+	\hspace*{0pt}
+	\begin{tabular}{p{2cm}|p{2.5cm}|>{\raggedright\arraybackslash}p{3cm}|p{4cm}|p{2.5cm}}
+		\hline \hline
+		\textbf{Tabla} & \textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} & \textbf{Restricciones} \\ \hline \hline
+		Usuarios & id\_usuario & INT & Identificador único del usuario & PK, Auto-increment \\ \hline
+		Usuarios & nombre & VARCHAR(100) & Nombre completo del usuario & NOT NULL \\ \hline
+		Usuarios & email & VARCHAR(100) & Correo electrónico del usuario & UNIQUE, NOT NULL \\ \hline
+		Usuarios & fecha\_registro & DATE & Fecha de registro del usuario & NOT NULL \\ \hline
+		Usuarios & contrasena & VARCHAR(255) & Contraseña encriptada & NOT NULL \\ \hline
+	\end{tabular}
+	\caption{Diccionario de Datos - Tabla Usuarios}
+	\label{tab:diccionario_usuarios}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\hspace*{0pt}
+	\begin{tabular}{p{2cm}|p{2.5cm}|>{\raggedright\arraybackslash}p{3cm}|p{4cm}|p{2.5cm}}
+		\hline \hline
+		\textbf{Tabla} & \textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} & \textbf{Restricciones} \\ \hline \hline
+		Categorias & id\_categoria & INT & Identificador único de categoría & PK, Auto-increment \\ \hline
+		Categorias & nombre & VARCHAR(50) & Nombre de la categoría & NOT NULL \\ \hline
+		Categorias & descripcion & TEXT & Descripción de la categoría & \\ \hline
+	\end{tabular}
+	\caption{Diccionario de Datos - Tabla Categorias}
+	\label{tab:diccionario_categorias}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\hspace*{0pt}
+	\begin{tabular}{p{2cm}|p{2.5cm}|>{\raggedright\arraybackslash}p{3cm}|p{4cm}|p{2.5cm}}
+		\hline \hline
+		\textbf{Tabla} & \textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} & \textbf{Restricciones} \\ \hline \hline
+		Autores & id\_autor & INT & Identificador único del autor & PK, Auto-increment \\ \hline
+		Autores & nombre & VARCHAR(100) & Nombre completo del autor & NOT NULL \\ \hline
+		Autores & nacionalidad & VARCHAR(50) & Nacionalidad del autor & DEFAULT '---' \\ \hline
+		Autores & fecha\_nacimiento & DATE & Fecha de nacimiento del autor & \\ \hline
+	\end{tabular}
+	\caption{Diccionario de Datos - Tabla Autores}
+	\label{tab:diccionario_autores}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\hspace*{0pt}
+	\begin{tabular}{p{2cm}|p{2.5cm}|>{\raggedright\arraybackslash}p{3cm}|p{4cm}|p{2.5cm}}
+		\hline \hline
+		\textbf{Tabla} & \textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} & \textbf{Restricciones} \\ \hline \hline
+		Libros & id\_libro & INT & Identificador único del libro & PK, Auto-increment \\ \hline
+		Libros & titulo & VARCHAR(150) & Título del libro & NOT NULL \\ \hline
+		Libros & id\_autor & INT & ID del autor del libro & FK (Autores), NOT NULL \\ \hline
+		Libros & id\_categoria & INT & ID de la categoría del libro & FK (Categorias), NOT NULL \\ \hline
+		Libros & fecha\_publicacion & DATE & Fecha de publicación del libro & \\ \hline
+		Libros & isbn & VARCHAR(13) & Número ISBN del libro & UNIQUE \\ \hline
+	\end{tabular}
+	\caption{Diccionario de Datos - Tabla Libros}
+	\label{tab:diccionario_libros}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\hspace*{0pt}
+	\begin{tabular}{p{2cm}|p{2.5cm}|>{\raggedright\arraybackslash}p{3cm}|p{4cm}|p{2.5cm}}
+		\hline \hline
+		\textbf{Tabla} & \textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} & \textbf{Restricciones} \\ \hline \hline
+		Resenas & id\_resena & INT & Identificador único de la reseña & PK, Auto-increment \\ \hline
+		Resenas & id\_usuario & INT & ID del usuario que escribió & FK (Usuarios), NOT NULL \\ \hline
+		Resenas & id\_libro & INT & ID del libro reseñado & FK (Libros), NOT NULL \\ \hline
+		Resenas & calificacion & INT & Puntuación (1-5) & NOT NULL, CHECK(1-5) \\ \hline
+		Resenas & comentario & TEXT & Comentario de la reseña & \\ \hline
+		Resenas & fecha\_resena & DATETIME & Fecha y hora de la reseña & NOT NULL, DEFAULT CURRENT\_TIMESTAMP \\ \hline
+	\end{tabular}
+	\caption{Diccionario de Datos - Tabla Resenas}
+	\label{tab:diccionario_resenas}
+\end{table}
+
+\section{\color{colorIPN}{Conclusión Final}}
+El desarrollo del sistema de reseñas de libros permitió aplicar conceptos de arquitectura web moderna, integración de frontend y backend, y buenas prácticas de seguridad y modelado de datos. El resultado es una plataforma funcional, segura y escalable, que facilita la interacción de los usuarios con la base de datos de libros y fomenta la participación mediante reseñas. Este proyecto sienta las bases para futuras mejoras, como la incorporación de recomendaciones personalizadas, análisis de sentimientos y nuevas funcionalidades orientadas a la experiencia del usuario.
+
+\end{document}

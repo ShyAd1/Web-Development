@@ -1,28 +1,53 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <a class="navbar-brand" routerLink="/home">📚 Reseñas Libros</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+          <a class="nav-link" routerLink="/home" routerLinkActive="active">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/reviews">Reseñas</a>
+          <a class="nav-link" routerLink="/reviews" routerLinkActive="active">Reseñas</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/books">Libros</a>
+          <a class="nav-link" routerLink="/books" routerLinkActive="active">Libros</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/authors">Autores</a>
+          <a class="nav-link" routerLink="/authors" routerLinkActive="active">Autores</a>
         </li>
       </ul>
-      <ul class="navbar-nav mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/register">Registro</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/login">Inicio de Sesión</a>
-        </li>
-      </ul>
+
+      <!-- Authenticated: Only show "Cerrar Sesión" -->
+      <ng-container *ngIf="isLoggedIn$ | async; else loggedOutNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <button class="btn btn-outline-danger ms-2" (click)="logout()">
+              <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
+            </button>
+          </li>
+        </ul>
+      </ng-container>
+
+      <!-- Not authenticated: Show Registro and Iniciar Sesión -->
+      <ng-template #loggedOutNav>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/register" routerLinkActive="active">
+              <i class="bi bi-person-plus me-1"></i>Registro
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active">
+              <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
+            </a>
+          </li>
+        </ul>
+      </ng-template>
     </div>
   </div>
 </nav>

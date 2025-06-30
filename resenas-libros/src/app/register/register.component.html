@@ -54,6 +54,9 @@
                   ></i>
                 </button>
               </div>
+              <small class="form-text text-muted">
+                Mínimo 8 caracteres, debe incluir letras y números
+              </small>
             </div>
             <div class="mb-3">
               <label for="confirmPassword" class="form-label"
@@ -107,12 +110,13 @@
               class="btn btn-primary btn-lg w-100 shadow-sm"
               [disabled]="!isFormValid()"
             >
-              Registrarse
+              <span *ngIf="!isLoading">Registrarse</span>
+              <span *ngIf="isLoading">Registrando...</span>
               <span
-                class="spinner-border spinner-border-sm ms-2 d-none"
+                class="spinner-border spinner-border-sm ms-2"
                 role="status"
                 aria-hidden="true"
-                id="loadingSpinner"
+                *ngIf="isLoading"
               ></span>
             </button>
           </form>
